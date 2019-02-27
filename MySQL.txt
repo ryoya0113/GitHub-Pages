@@ -1,0 +1,108 @@
+■SQLServer
+CREATE LOGIN [user] WITH PASSWORD = 'password' , DEFAULT_DATABASE = [master] ,CHECK_EXPIRATION=OFF
+CREATE USER [user] FOR LOGIN [user]
+EXEC sp_addrolemember @rolename = 'db_owner', @membername = [user]
+GRANT 権限 ON [role] TO [user]
+GRANT 権限 ON [table] TO [user]
+
+■MySQL
+CREATE USER user@% IDENTIFIED BY [PASSWORD] 'password';
+SHOW GRANTS for 'user'@'%';
+GRANT 権限 ON レベル TO user;
+グローバルレベル:
+GRANT 権限 ON *.* TO user;
+
+
+→正直ベースそんなに差はない
+
+
+確認コマンド
+・ユーザ確認
+select user,host from mysql.user;
+
+・インデックス確認
+show index from テーブル名；
+
+
+■MySQL
+https://dev.mysql.com/doc/refman/5.6/ja/privileges-provided.html
+
+■MSSQL
+https://docs.microsoft.com/ja-jp/sql/relational-databases/security/permissions-database-engine?view=sql-server-2017
+
+
+権限の確認
+show grants for watanabe@localhost;
++----------------------------------------------------------------------------------------------------+
+| Grants for watanabe@localhost                                                                      |
++----------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `watanabe`@`localhost`                                                       |
+| GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `new_schmea`.* TO `watanabe`@`localhost`    |
+| GRANT SELECT ON `new_shema`.* TO `watanabe`@`localhost`                                            |
+| GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `new_schema`.`new_table` TO `watanabe`@`localhost` |
++----------------------------------------------------------------------------------------------------+
+※ここにあるコマンドそのまま叩けば反映される
+
+
+ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `new_schema`.`new_table` TO `watanabe`@`localhost`;
+→Success！！！
+
+
+REVOKE ALL PRIVILEGES, GRANT OPTION FROM watanabe@localhost;
+→一旦すべての権限を削除
+
+flush privileges;
+→権限変更を反映する
+
+・insert into new_table(id,name,gender) values(1,'watanabe','man');
+→できない。。。
+ERROR 1054 (42S22): Unknown column 'id' in 'field list'
+→columnが無い状態で３つのカラムに値を入れようとしている
+→columnを作るSQL文が必要！！
+
+alter table new_table add id int;
+alter table new_table add name varchar(10);
+alter table new_table add gender varchar(10);
+
+show columns from new_table;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| idnew_table | int(11)     | NO   | PRI | NULL    |       |
+| name        | varchar(10) | YES  |     | NULL    |       |
+| id          | int(11)     | YES  |     | NULL    |       |
+| gender      | varchar(10) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+
+insert into new_table(id,name,gender) values(1,'watanabe','man');
+→できない
+ERROR 1364 (HY000): Field 'idnew_table' doesn't have a default value
+
+idnew_table を削除したい
+
+alter table new_table drop column idnew_table;
+
+insert into new_table(id,name,gender) values(1,'watanabe','man');
+→できた
+
+ select * from new_table;
++----------+------+--------+
+| name     | id   | gender |
++----------+------+--------+
+| watanabe |    1 | man    |
++----------+------+--------+
+
+
+
+環境変数
+→恐らくMySQLを実行する時にいちいちディレクトに移動しなくてもコマンドが打てる
+→ただ、既存のPathを上書きしちゃダメ！NG！
+
+・事前にPathをコピーバックアップしておく
+・「；」で改行していく
+・変更したら再起動をかける
+
+
+・MySQLのボトルネック
+
+・重たいクエリの状況と対応
