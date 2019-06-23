@@ -32,11 +32,11 @@ https://docs.microsoft.com/ja-jp/sql/relational-databases/security/permissions-d
 
 
 権限の確認
-show grants for watanabe@localhost;
+show grants for ryoyavicii@localhost;
 +----------------------------------------------------------------------------------------------------+
-| Grants for watanabe@localhost                                                                      |
+| Grants for ryoyavicii@localhost                                                                      |
 +----------------------------------------------------------------------------------------------------+
-| GRANT USAGE ON *.* TO `watanabe`@`localhost`                                                       |
+| GRANT USAGE ON *.* TO `ryoyavicii`@`localhost`                                                       |
 | GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `new_schmea`.* TO `watanabe`@`localhost`    |
 | GRANT SELECT ON `new_shema`.* TO `watanabe`@`localhost`                                            |
 | GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `new_schema`.`new_table` TO `watanabe`@`localhost` |
@@ -44,11 +44,11 @@ show grants for watanabe@localhost;
 ※ここにあるコマンドそのまま叩けば反映される
 
 
- GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `new_schema`.`new_table` TO `watanabe`@`localhost`;
+ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `new_schema`.`new_table` TO `ryoyavicii`@`localhost`;
 →Success！！！
 
 
-REVOKE ALL PRIVILEGES, GRANT OPTION FROM watanabe@localhost;
+REVOKE ALL PRIVILEGES, GRANT OPTION FROM ryoyavicii@localhost;
 →一旦すべての権限を削除
 
 flush privileges;
@@ -74,7 +74,7 @@ show columns from new_table;
 | gender      | varchar(10) | YES  |     | NULL    |       |
 +-------------+-------------+------+-----+---------+-------+
 
-insert into new_table(id,name,gender) values(1,'watanabe','man');
+insert into new_table(id,name,gender) values(1,'ryoyavicii','man');
 →できない
 ERROR 1364 (HY000): Field 'idnew_table' doesn't have a default value
 
@@ -89,7 +89,7 @@ insert into new_table(id,name,gender) values(1,'watanabe','man');
 +----------+------+--------+
 | name     | id   | gender |
 +----------+------+--------+
-| watanabe |    1 | man    |
+| ryoyavicii |    1 | man    |
 +----------+------+--------+
 
 
@@ -106,3 +106,5 @@ insert into new_table(id,name,gender) values(1,'watanabe','man');
 ・MySQLのボトルネック
 
 ・重たいクエリの状況と対応
+→sp_who2
+ sp_lock
